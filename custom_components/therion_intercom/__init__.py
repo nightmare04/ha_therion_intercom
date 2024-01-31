@@ -7,22 +7,16 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup(hass: core.HomeAssistant, config: dict) -> bool:
-    """Set up the Therion intercom integration component."""
-    # @TODO: Add setup code.
-    return True
-
-
 async def async_setup_entry(
-    hass: core.HomeAssistant, entry: config_entries.ConfigEntry
+    hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry
 ) -> bool:
     """Set up platform from a ConfigEntry."""
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = entry.data
+    hass.data[DOMAIN][config_entry.entry_id] = config_entry.data
 
     # Forward the setup to the camera platform.
     hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "camera")
+        hass.config_entries.async_forward_entry_setup(config_entry, "camera")
     )
     return True
 
