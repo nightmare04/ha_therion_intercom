@@ -1,3 +1,3 @@
-# Therion intercom integration for Home Assistant
+# Интеграция умного домофона компании Терион
 
-## Installation
+## Установка
