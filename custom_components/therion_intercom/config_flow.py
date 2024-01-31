@@ -1,12 +1,15 @@
 """Config flow for therion intercom."""
 import voluptuous as vol
+
 from homeassistant import config_entries
-from .api import *
+
+from .api import get_token, send_telephone
 from .const import DOMAIN
 
 
 class TherionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # noqa: D101
     def __init__(self) -> None:
+        """Init configflow."""
         super().__init__()
         self.data = {}
 
@@ -19,6 +22,7 @@ class TherionConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # noqa: D101
         return self.async_show_form(step_id="user", data_schema=vol.Schema(data_schema))
 
     async def async_step_token(self, user_input=None):
+        """Get token from api."""
         data_schema = {vol.Required("code"): str}
         if user_input is not None:
             self.data["code"] = user_input["code"]

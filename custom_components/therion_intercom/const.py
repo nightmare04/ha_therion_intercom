@@ -5,6 +5,7 @@ URL = "https://mb.therion.org"
 URL_CODE = "/api/v1/auth/code"
 URL_LOGIN = "/api/v1/auth/login"
 URL_DATA = "/api/v1/contract"
+URL_OPEN = "/api/v1/intercom/"
 
 HEADERS = {
     "Host": "mb.therion.org",

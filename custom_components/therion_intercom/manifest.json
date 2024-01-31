@@ -1,12 +1,12 @@
 {
-  "codeowners": ["@nightmare04"],
-  "config_flow": true,
-  "documentation": "https://github.com/nightmare04/ha_therion_intercom",
-  "issue_tracker": "https://github.com/nightmare04/ha_therion_intercom/issues",
   "domain": "therion_intercom",
-  "iot_class": "cloud_polling",
-  "dependencies": ["ffmpeg"],
   "name": "Therion intercom integration",
+  "codeowners": ["@nightmare04"],
+  "dependencies": [],
+  "config_flow": true,
+  "documentation": "https://www.example.com",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
   "requirements": [],
-  "version": "0.1.0"
+  "version":"0.0.1"
 }

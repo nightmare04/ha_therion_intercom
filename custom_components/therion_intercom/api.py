@@ -1,8 +1,8 @@
 """API from therion intercom."""
 
 import aiohttp
-from dataclasses import dataclass
-from .const import *
+
+from .const import HEADERS, URL, URL_CODE, URL_LOGIN
 
 
 async def send_telephone(data) -> str:
