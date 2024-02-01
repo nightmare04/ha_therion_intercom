@@ -19,8 +19,7 @@ async def async_setup_entry(
     """Set up platform from a ConfigEntry."""
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][config_entry.entry_id] = config_entry.data
-    api_intercom = TherionApi.create(hass, config_entry)
-    config_entry["api"] = api_intercom
+
     # Forward the setup to the camera, button, sensor platform.
     for domain in _all:
         hass.async_create_task(
