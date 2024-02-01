@@ -42,33 +42,23 @@ class SensorBalance(SensorEntity):
     _attr_device_class = SensorDeviceClass.MONETARY
     _attr_state_class = SensorStateClass.MEASUREMENT
 
+
     def __init__(self, session, config) -> None:
         """Init intercom balance."""
         super().__init__()
+        self.api = session["api"]
         self.config = config
         self.session = session
-        self.last_contract = {}
+        self.contract = {}
 
     @property
     def name(self) -> str:
         """Return name of Therion balance sensor."""
         return "Balance sensor"
 
-    async def async_get_contract(self):
-        """Get contract info from API."""
-        payload = {}
-        headers = HEADERS
-        headers["Cookie"] = self.config["Cookie"]
-        headers["Authorization"] = self.config["token"]
-        api_url = URL + URL_DATA
-        async with self.session.get(api_url, json=payload, headers=headers) as resp:
-            json_data = await resp.json()
-            self.last_contract = json_data
-            return json_data
-
     async def async_update(self):
         """Update balance."""
-        data = await self.async_get_contract()
+        data = await self.api.async_get_contract()
         self._attr_native_value = data["content"][0]["balance"] or "0"
 
     @property
