@@ -1,12 +1,16 @@
 """Init for therion intercom."""
 
+from homeassistant import core, config_entries
+from .const import DOMAIN
+from .api import TherionApi
 import logging
 
-from homeassistant import config_entries, core
-
-from .const import DOMAIN
-
 _LOGGER = logging.getLogger(__name__)
+_all = (
+    "camera",
+    "button",
+    "sensor"
+)
 
 
 async def async_setup_entry(
@@ -17,20 +21,14 @@ async def async_setup_entry(
     hass.data[DOMAIN][config_entry.entry_id] = config_entry.data
 
     # Forward the setup to the camera, button, sensor platform.
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(config_entry, "camera")
-    )
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(config_entry, "button")
-    )
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(config_entry, "sensor")
-    )
+    for domain in _all:
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(config_entry, domain)
+        )
     return True
 
 
 async def async_remove_entry(hass, entry) -> None:
     """Handle removal of an entry."""
-    await hass.config_entries.async_forward_entry_unload(entry, "camera")
-    await hass.config_entries.async_forward_entry_unload(entry, "button")
-    await hass.config_entries.async_forward_entry_unload(entry, "sensor")
+    for domain in _all:
+        await hass.config_entries.async_forward_entry_unload(entry, domain)
