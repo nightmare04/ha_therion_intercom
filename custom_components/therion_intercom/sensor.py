@@ -40,7 +40,7 @@ class SensorBalance(SensorEntity):
     _attr_native_unit_of_measurement = "RUB"
     _attr_icon = "mdi:currency-rub"
     _attr_device_class = SensorDeviceClass.MONETARY
-    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = SensorStateClass.TOTAL
 
 
     def __init__(self, session, config) -> None:
