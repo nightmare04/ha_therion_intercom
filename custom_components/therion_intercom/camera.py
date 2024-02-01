@@ -17,7 +17,6 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN, HEADERS, URL, URL_DATA
-from .api import TherionApi
 
 _LOGGER = logging.getLogger(__name__)
 SCAN_INTERVAL = timedelta(seconds=15)
@@ -51,10 +50,9 @@ class TherionIntercom(Camera):
     def __init__(self, session, config) -> None:
         """Init intercom camera."""
         super().__init__()
-        self.api: TherionApi = config["api"]
         self.config = config
         self.session = session
-        self.contract = {}
+        self.last_conctract = {}
 
     @property
     def name(self) -> str:
@@ -65,8 +63,26 @@ class TherionIntercom(Camera):
         self, width: int | None = None, height: int | None = None
     ) -> bytes | None:
         """Get still image for intercom camera."""
-        image = await self.api.async_get_still_image()
+        
+        headers = HEADERS
+        headers["Cookie"] = self.config["Cookie"]
+        headers["Authorization"] = self.config["token"]
+        still_url = self.last_conctract["content"][0]["entrances"][0]["snapshotLink"]
+        async with self.session.get(still_url, headers=headers) as resp:
+            image = await resp.read()
         return image
+
+    async def async_get_contract(self):
+        """Get contract info from API."""
+        payload = {}
+        headers = HEADERS
+        headers["Cookie"] = self.config["Cookie"]
+        headers["Authorization"] = self.config["token"]
+        api_url = URL + URL_DATA
+        async with self.session.get(api_url, json=payload, headers=headers) as resp:
+            json_data = await resp.json()
+            self.last_conctract = json_data
+        return json_data
 
     async def stream_source(self) -> str | None:
         """Get stream link for intercom camera."""
@@ -81,7 +97,7 @@ class TherionIntercom(Camera):
     @property
     def unique_id(self) -> str:
         """Return the unique ID of the sensor."""
-        return self.contract["content"][0]["id"]
+        return self.last_conctract["content"][0]["id"]
 
     @property
     def use_stream_for_stills(self) -> bool:
