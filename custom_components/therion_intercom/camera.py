@@ -19,7 +19,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN, HEADERS, URL, URL_DATA
 
 _LOGGER = logging.getLogger(__name__)
-UPDATE_INTERVAL = timedelta(seconds=15)
+SCAN_INTERVAL = timedelta(seconds=15)
 
 
 async def async_setup_entry(
@@ -63,6 +63,7 @@ class TherionIntercom(Camera):
         self, width: int | None = None, height: int | None = None
     ) -> bytes | None:
         """Get still image for intercom camera."""
+        
         headers = HEADERS
         headers["Cookie"] = self.config["Cookie"]
         headers["Authorization"] = self.config["token"]
@@ -85,14 +86,13 @@ class TherionIntercom(Camera):
 
     async def stream_source(self) -> str | None:
         """Get stream link for intercom camera."""
-        json_data = await self.async_get_contract()
-        stream_link = json_data["content"][0]["entrances"][0]["videoLink"]
+        await self.api.async_get_contract()
+        stream_link = self.contract["content"][0]["entrances"][0]["videoLink"]
         return stream_link
 
     async def async_update(self):
         """Update intercom camera."""
         await self.stream_source()
-        await self.async_get_contract()
 
     @property
     def unique_id(self) -> str:
@@ -101,5 +101,5 @@ class TherionIntercom(Camera):
 
     @property
     def use_stream_for_stills(self) -> bool:
-        """Whether or not to use stream to generate stills."""
+        """Use stream to generate stills."""
         return True
